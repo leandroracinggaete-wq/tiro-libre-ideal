@@ -78,7 +78,7 @@ th{background:#0f4d27;color:#fff}tbody tr:last-child td{background:#fff2a8;font-
     <div>
       <div class="eyebrow">Ecuaciones no lineales · aplicación al fútbol</div>
       <h1>¿Existe un tiro libre ideal?</h1>
-      <p class="subtitle" id="subtitle">Elegí las condiciones del tiro. El modelo busca el menor ángulo que llega al objetivo y supera la barrera con margen.</p>
+      <p class="subtitle" id="subtitle">Elegí las condiciones del tiro. El modelo sigue siempre la raíz baja/directa (θ ≤ 45°) y verifica si además supera la barrera con margen.</p>
     </div>
     <nav class="modes" role="tablist" aria-label="Etapas de la demostración">
       <button class="mode" id="shot-tab" type="button" role="tab" aria-selected="true" aria-controls="shot-panel"><span class="mode-number">01</span>El tiro</button>
@@ -113,7 +113,7 @@ th{background:#0f4d27;color:#fff}tbody tr:last-child td{background:#fff2a8;font-
       <div class="ball" id="ball" aria-hidden="true"></div>
       <div class="label-chip small" id="wall-label">Barrera</div>
       <div class="label-chip" id="goal-label">Objetivo</div>
-      <div class="scene-note" id="scene-note">Ideal = menor ángulo factible dentro de este modelo.</div>
+      <div class="scene-note" id="scene-note">Trayectoria directa = raíz baja (θ ≤ 45°). La raíz alta se descarta.</div>
     </div>
   </section>
 
@@ -161,18 +161,18 @@ th{background:#0f4d27;color:#fff}tbody tr:last-child td{background:#fff2a8;font-
     <div class="solution-banner" id="solution-banner" hidden><strong class="nums" id="solution-title"></strong><p id="solution-message"></p></div>
     <div class="details-group">
       <details class="details-box"><summary id="table-title">Tabla de iteraciones · 0 pasos</summary><div class="details-content table-wrap"><table><thead><tr><th>i</th><th>a (°)</th><th>b (°)</th><th>p=(a+b)/2 (°)</th><th>f(p) (m)</th><th>Cota |eₙ| (°)</th></tr></thead><tbody id="iteration-rows"></tbody></table><p id="empty-table">La primera fila aparece al probar el punto medio.</p></div></details>
-      <details class="details-box"><summary>Modelo y criterio de “ideal”</summary><div class="details-content"><p>Usamos un modelo de proyectil sin resistencia del aire ni efecto Magnus. La trayectoria viene dada por:</p><div class="model-formula">y(x,θ) = x·tan(θ) − g·x² / [2·v₀²·cos²(θ)]</div><p>Buscamos θ tal que <b>y(D,θ) = H<sub>obj</sub></b>. Puede haber dos ángulos que llegan al mismo punto. En esta demo llamamos “ideal” al <b>menor ángulo factible</b> que además supera la barrera con un margen de 0,20 m.</p><p>Esto no pretende predecir exactamente un tiro profesional real: es una generalización matemática útil para mostrar cómo un problema físico se transforma en una ecuación no lineal.</p></div></details>
+      <details class="details-box"><summary>Modelo y criterio de “ideal”</summary><div class="details-content"><p>Usamos un modelo de proyectil sin resistencia del aire ni efecto Magnus. La trayectoria viene dada por:</p><div class="model-formula">y(x,θ) = x·tan(θ) − g·x² / [2·v₀²·cos²(θ)]</div><p>Buscamos θ tal que <b>y(D,θ) = H<sub>obj</sub></b>. Puede haber dos ángulos que llegan al mismo punto: una raíz baja y otra alta. Para que el simulador represente un tiro libre directo y no salte de golpe a arcos de 70°–80°, en esta demo seguimos únicamente la <b>raíz baja/directa (θ ≤ 45°)</b>. Después verificamos si esa raíz supera la barrera con un margen de 0,20 m. Si no la supera, el resultado se marca como no factible en vez de elegir automáticamente la raíz alta.</p><p>Esto no pretende predecir exactamente un tiro profesional real: es una generalización matemática útil para mostrar cómo un problema físico se transforma en una ecuación no lineal.</p></div></details>
       <details class="details-box wide"><summary id="newton-title">Newton-Raphson · tabla · 0 pasos</summary><div class="details-content"><div class="table-wrap"><table><thead><tr><th>i</th><th>θᵢ (°)</th><th>f(θᵢ) (m)</th><th>f′(θᵢ) (m/°)</th><th>ξ = |θᵢ₊₁ − θᵢ| (°)</th></tr></thead><tbody id="newton-rows"></tbody></table></div><p>Fórmula del curso: θᵢ₊₁ = θᵢ − f(θᵢ) / f′(θᵢ), con la derivada analítica:</p><div class="model-formula">f′(θ°) = (π/180)·sec²θ · (D − g·D²·tanθ / v₀²)</div><p>Como θ se expresa en grados, aparece el factor π/180. La derivada se anula en θ* = <b id="theta-star">—</b>, el ángulo que maximiza y(D,θ). Ahí Newton falla por derivada nula, y si x₀ queda cerca de θ* un paso puede saltar a la otra raíz o divergir. No hay un criterio general de convergencia, por eso conviene partir cerca de la raíz (aquí, el centro del intervalo de Bisección).</p></div></details>
     </div>
   </section>
 
-  <footer class="footer"><span>Modelo ilustrativo · sin resistencia del aire · sin efecto Magnus · parámetros editables</span><span>★ Caso del guion: vuelve al ejemplo de 30 m · →: siguiente iteración · F: pantalla completa</span></footer>
+  <footer class="footer"><span>Modelo ilustrativo · raíz baja/directa ≤ 45° · sin resistencia del aire · sin efecto Magnus</span><span>★ Caso del guion: vuelve al ejemplo de 30 m · →: siguiente iteración · F: pantalla completa</span></footer>
   <div class="sr-only" id="announcer" aria-live="polite"></div>
 </main>
 <script>
 (()=>{
 'use strict';
-const G=9.81, CROSSBAR=2.44, MARGIN=0.20, MAXIT=50;
+const G=9.81, CROSSBAR=2.44, MARGIN=0.20, DIRECT_MAX_ANGLE=45, MAXIT=50;
 let ANGLE_EPS=1e-4;
 const $=id=>document.getElementById(id);
 const fmt=(n,p=2)=>Number(n).toLocaleString('es-AR',{minimumFractionDigits:p,maximumFractionDigits:p});
@@ -185,28 +185,70 @@ function announce(s){$('announcer').textContent=s;}
 function yAt(x,theta){const c=Math.cos(theta),t=Math.tan(theta);return x*t-G*x*x/(2*cfg.v*cfg.v*c*c);}
 function fDeg(d){return yAt(cfg.D,rad(d))-cfg.target;}
 function rootScan(){
-  const roots=[];let prevD=2,prev=fDeg(prevD);
-  for(let d=2.25;d<=80;d+=.25){const cur=fDeg(d);if(Number.isFinite(prev)&&Number.isFinite(cur)&&prev*cur<=0){let a=prevD,b=d,fa=prev;for(let i=0;i<80;i++){const m=(a+b)/2,fm=fDeg(m);if(Math.abs(fm)<1e-11){a=b=m;break;}if(fa*fm<=0)b=m;else{a=m;fa=fm;}}const r=(a+b)/2;if(!roots.some(x=>Math.abs(x-r)<1e-5))roots.push(r);}prevD=d;prev=cur;}return roots;
+  // Recorremos casi todo el dominio para detectar las raíces matemáticas,
+  // pero la selección física de la demo se hará luego sobre la raíz baja/directa.
+  const roots=[];let prevD=1,prev=fDeg(prevD);
+  for(let d=1.10;d<=88.5;d+=.10){
+    const cur=fDeg(d);
+    if(Number.isFinite(prev)&&Number.isFinite(cur)&&prev*cur<=0){
+      let a=prevD,b=d,fa=prev;
+      for(let i=0;i<90;i++){
+        const m=(a+b)/2,fm=fDeg(m);
+        if(Math.abs(fm)<1e-12){a=b=m;break;}
+        if(fa*fm<=0)b=m;else{a=m;fa=fm;}
+      }
+      const r=(a+b)/2;
+      if(!roots.some(x=>Math.abs(x-r)<1e-5))roots.push(r);
+    }
+    prevD=d;prev=cur;
+  }
+  return roots.sort((a,b)=>a-b);
 }
 function bracketFor(root){
-  // Para el caso del guion priorizamos [10°,30°], así la demostración coincide con la exposición.
-  const teaching=[[10,30],[5,35],[5,45],[2,45]];
-  for(const [a,b] of teaching){const fa=fDeg(a),fb=fDeg(b);if(root>=a&&root<=b&&Number.isFinite(fa)&&Number.isFinite(fb)&&fa*fb<0)return[a,b];}
-  // Si cambian mucho los parámetros, construimos un intervalo local alrededor de la raíz encontrada.
-  let span=1;while(span<18){const a=Math.max(2,root-span),b=Math.min(80,root+span),fa=fDeg(a),fb=fDeg(b);if(Number.isFinite(fa)&&Number.isFinite(fb)&&fa*fb<0)return[a,b];span+=1;}return null;
+  // Para el caso del guion priorizamos [10°,30°]. El resto de los intervalos
+  // se mantienen dentro de la zona de tiro directo para no encerrar la raíz alta.
+  const teaching=[[10,30],[5,35],[5,45],[2,45],[1,45]];
+  for(const [a,b] of teaching){
+    const fa=fDeg(a),fb=fDeg(b);
+    if(root>=a&&root<=b&&Number.isFinite(fa)&&Number.isFinite(fb)&&fa*fb<=0)return[a,b];
+  }
+  let span=.5;
+  while(span<12){
+    const a=Math.max(1,root-span),b=Math.min(DIRECT_MAX_ANGLE,root+span),fa=fDeg(a),fb=fDeg(b);
+    if(Number.isFinite(fa)&&Number.isFinite(fb)&&fa*fb<=0)return[a,b];
+    span+=.5;
+  }
+  return null;
 }
 function dfDeg(d){const t=rad(d),c=Math.cos(t);return (1/(c*c))*(cfg.D-G*cfg.D*cfg.D*Math.tan(t)/(cfg.v*cfg.v))*Math.PI/180;}
-function newton(start){let x=start,rows=[];for(let i=0;i<MAXIT;i++){const fx=fDeg(x),dfx=dfDeg(x);if(!Number.isFinite(dfx)||Math.abs(dfx)<1e-9)break;const nx=x-fx/dfx;if(!Number.isFinite(nx)||nx<1||nx>89)break;const xi=Math.abs(nx-x);rows.push({x,fx,dfx,xi});x=nx;if(xi<=ANGLE_EPS)return{x,rows,ok:true};}return{x,rows,ok:false};}
+function newton(start){let x=start,rows=[];for(let i=0;i<MAXIT;i++){const fx=fDeg(x),dfx=dfDeg(x);if(!Number.isFinite(dfx)||Math.abs(dfx)<1e-9)break;const nx=x-fx/dfx;if(!Number.isFinite(nx)||nx<1||nx>DIRECT_MAX_ANGLE)break;const xi=Math.abs(nx-x);rows.push({x,fx,dfx,xi});x=nx;if(xi<=ANGLE_EPS)return{x,rows,ok:true};}return{x,rows,ok:false};}
 function analyze(){
   const roots=rootScan();
-  const data=roots.map(angle=>{const th=rad(angle),wallY=yAt(cfg.wallD,th),flight=cfg.D/(cfg.v*Math.cos(th)),clear=wallY-(cfg.wallH+MARGIN),feasible=clear>=0&&cfg.target<=CROSSBAR;return{angle,th,wallY,clear,flight,feasible,bracket:bracketFor(angle)};});
-  const feasible=data.filter(r=>r.feasible).sort((a,b)=>a.angle-b.angle);
-  const ideal=feasible[0]||null;
-  const low=data[0]||null;
-  const chosen=ideal||low;
+  const data=roots.map(angle=>{
+    const th=rad(angle),wallY=yAt(cfg.wallD,th),flight=cfg.D/(cfg.v*Math.cos(th)),clear=wallY-(cfg.wallH+MARGIN);
+    const direct=angle<=DIRECT_MAX_ANGLE+1e-9;
+    const feasible=direct&&clear>=0&&cfg.target<=CROSSBAR;
+    return{angle,th,wallY,clear,flight,direct,feasible,bracket:direct?bracketFor(angle):null};
+  });
+  // Siempre seguimos la raíz baja/directa. Si no supera la barrera, se informa como
+  // trayectoria no factible; nunca saltamos automáticamente a la raíz alta.
+  const directRoots=data.filter(r=>r.direct).sort((a,b)=>a.angle-b.angle);
+  const chosen=directRoots[0]||null;
+  const ideal=chosen&&chosen.feasible?chosen:null;
+  const highRoot=data.find(r=>!r.direct)||null;
   let bisectionSteps=null,newtonResult=null;
-  if(chosen&&chosen.bracket){let [a,b]=chosen.bracket,fa=fDeg(a),rows=[];for(let i=0;i<MAXIT;i++){const m=(a+b)/2,fm=fDeg(m),bound=(b-a)/2;rows.push({n:i+1,a,b,m,f:fm,bound});if(Math.abs(fm)<1e-12||bound<=ANGLE_EPS)break;if(fa*fm<=0)b=m;else{a=m;fa=fm;}}bisectionSteps=rows;newtonResult=newton((chosen.bracket[0]+chosen.bracket[1])/2);}
-  return{roots:data,ideal,chosen,bisectionSteps,newtonResult};
+  if(chosen&&chosen.bracket){
+    let [a,b]=chosen.bracket,fa=fDeg(a),rows=[];
+    for(let i=0;i<MAXIT;i++){
+      const m=(a+b)/2,fm=fDeg(m),bound=(b-a)/2;
+      rows.push({n:i+1,a,b,m,f:fm,bound});
+      if(Math.abs(fm)<1e-12||bound<=ANGLE_EPS)break;
+      if(fa*fm<=0)b=m;else{a=m;fa=fm;}
+    }
+    bisectionSteps=rows;
+    newtonResult=newton((chosen.bracket[0]+chosen.bracket[1])/2);
+  }
+  return{roots:data,directRoots,highRoot,ideal,chosen,bisectionSteps,newtonResult};
 }
 function syncCfg(){cfg.D=Number($('distance').value);cfg.v=Number($('speed').value);cfg.target=Number($('target').value);cfg.wallD=Math.min(Number($('wall-distance').value),cfg.D-1);$('wall-distance').value=cfg.wallD;cfg.wallH=Number($('wall-height').value);$('distance-out').textContent=fmt(cfg.D,1)+' m';$('speed-out').textContent=fmt(cfg.v,1)+' m/s';$('speed-kmh').textContent=fmt(cfg.v*3.6,1)+' km/h';$('target-out').textContent=fmt(cfg.target,2)+' m';$('wall-distance-out').textContent=fmt(cfg.wallD,2)+' m';$('wall-height-out').textContent=fmt(cfg.wallH,2)+' m';}
 function sceneCoords(x,y){const left=55,right=930,ground=290,scaleX=(right-left)/cfg.D,scaleY=68;return{x:left+x*scaleX,y:ground-y*scaleY};}
@@ -221,9 +263,26 @@ function updateScene(){
   let path='';if(chosen){for(let i=0;i<=90;i++){const x=cfg.D*i/90,y=Math.max(0,yAt(x,chosen.th)),p=sceneCoords(x,y);path+=(i?' L ':'M ')+p.x.toFixed(1)+' '+p.y.toFixed(1);} }
   $('arc').setAttribute('d',path);$('arc-shadow').setAttribute('d',path);
   const start=sceneCoords(0,0);$('ball').style.left=(start.x/10)+'%';$('ball').style.top=(start.y/3.5)+'%';$('ball').classList.remove('moving');
-  if(ideal){$('angle-readout').textContent=fmt(ideal.angle,2)+'°';$('scene-label').textContent='Trayectoria factible encontrada';$('result-strip').classList.remove('warn');$('result-title').textContent='Hay un tiro factible dentro del modelo.';$('result-subtitle').textContent=`Llega al objetivo y, en la barrera, alcanza ${fmt(ideal.wallY,2)} m. El mínimo exigido es ${fmt(cfg.wallH+MARGIN,2)} m.`;$('m-angle').textContent=fmt(ideal.angle,2)+'°';$('m-clearance').textContent=fmt(ideal.wallY,2)+' m';$('m-time').textContent=fmt(ideal.flight,2)+' s';}
-  else if(chosen){$('angle-readout').textContent=fmt(chosen.angle,2)+'°';$('scene-label').textContent='Llega al objetivo, pero no cumple la barrera';$('result-strip').classList.add('warn');$('result-title').textContent='No hay un tiro “ideal” con estos parámetros.';$('result-subtitle').textContent=`La raíz existe, pero en la barrera alcanza ${fmt(chosen.wallY,2)} m y debería alcanzar al menos ${fmt(cfg.wallH+MARGIN,2)} m.`;$('m-angle').textContent=fmt(chosen.angle,2)+'°';$('m-clearance').textContent=fmt(chosen.wallY,2)+' m';$('m-time').textContent=fmt(chosen.flight,2)+' s';}
-  else{$('angle-readout').textContent='—';$('scene-label').textContent='No se encontró una raíz en el rango';$('result-strip').classList.add('warn');$('result-title').textContent='No hay solución con esta velocidad y distancia.';$('result-subtitle').textContent='Probá aumentar la velocidad, cambiar la distancia o modificar la altura objetivo.';$('m-angle').textContent='—';$('m-clearance').textContent='—';$('m-time').textContent='—';}
+  if(ideal){
+    $('angle-readout').textContent=fmt(ideal.angle,2)+'°';$('scene-label').textContent='Trayectoria directa factible';$('result-strip').classList.remove('warn');
+    $('result-title').textContent='Hay un tiro directo factible dentro del modelo.';
+    $('result-subtitle').textContent=`Raíz baja: ${fmt(ideal.angle,2)}°. En la barrera alcanza ${fmt(ideal.wallY,2)} m; el mínimo exigido es ${fmt(cfg.wallH+MARGIN,2)} m.`;
+    $('m-angle').textContent=fmt(ideal.angle,2)+'°';$('m-clearance').textContent=fmt(ideal.wallY,2)+' m';$('m-time').textContent=fmt(ideal.flight,2)+' s';
+  }
+  else if(chosen){
+    $('angle-readout').textContent=fmt(chosen.angle,2)+'°';$('scene-label').textContent='Raíz baja encontrada, pero no supera la barrera';$('result-strip').classList.add('warn');
+    $('result-title').textContent='La trayectoria directa no es factible con estos parámetros.';
+    const highMsg=model.highRoot?` Existe otra raíz matemática de ${fmt(model.highRoot.angle,2)}°, pero se descarta por ser una trayectoria alta y no un tiro directo.`:'';
+    $('result-subtitle').textContent=`La raíz baja llega al objetivo, pero en la barrera alcanza ${fmt(chosen.wallY,2)} m y necesita ${fmt(cfg.wallH+MARGIN,2)} m.${highMsg}`;
+    $('m-angle').textContent=fmt(chosen.angle,2)+'°';$('m-clearance').textContent=fmt(chosen.wallY,2)+' m';$('m-time').textContent=fmt(chosen.flight,2)+' s';
+  }
+  else{
+    $('angle-readout').textContent='—';$('scene-label').textContent='No hay una raíz de trayectoria directa';$('result-strip').classList.add('warn');
+    $('result-title').textContent='No hay tiro directo para estas condiciones.';
+    const highMsg=model.highRoot?` Solo aparece una raíz alta de ${fmt(model.highRoot.angle,2)}°, que la demo descarta.`:' No se encontró ninguna raíz en el rango físico explorado.';
+    $('result-subtitle').textContent=`Probá cambiar velocidad, distancia o altura objetivo.${highMsg}`;
+    $('m-angle').textContent='—';$('m-clearance').textContent='—';$('m-time').textContent='—';
+  }
   initMath();
 }
 function pointAt(progress){const c=model&&model.chosen;if(!c)return sceneCoords(0,0);const x=cfg.D*clamp(progress,0,1),y=Math.max(0,yAt(x,c.th));return sceneCoords(x,y);}
@@ -235,7 +294,7 @@ function stepSearch(){if(!search||search.done)return null;const a=search.lo,b=se
 function renderNewton(){const nr=model&&model.newtonResult,body=$('newton-rows'),rows=nr?nr.rows:[];body.replaceChildren();$('theta-star').textContent=fmt(deg(Math.atan(cfg.v*cfg.v/(G*cfg.D))),2)+'°';$('newton-title').textContent='Newton-Raphson · tabla · '+rows.length+' pasos'+(nr&&!nr.ok?' · no converge':'');rows.forEach((r,i)=>{const tr=document.createElement('tr');[i+1,fmt(r.x,5),fmt(r.fx,6),fmt(r.dfx,5),r.xi==null?'—':fmt(r.xi,6)].forEach(v=>{const td=document.createElement('td');td.textContent=v;tr.append(td);});body.append(tr);});}
 function renderMath(){renderNewton();
   const valid=!!search,row=valid?search.last:null;
-  if(!valid){['bound-a','bound-b','bound-m'].forEach(id=>$(id).textContent='—');$('fa').textContent=$('fb').textContent='Sin intervalo';$('fm').textContent='—';$('step-badge').textContent='SIN RAÍZ UTILIZABLE';$('trial-math').textContent='No hay un intervalo válido para Bisección.';$('step-message').textContent='Modificá los parámetros hasta que la trayectoria pueda alcanzar la altura objetivo.';$('keep-interval').textContent='—';$('next-step').disabled=true;$('solve').disabled=true;$('restart-math').disabled=true;$('interval-active').style.width='0%';$('interval-mid').hidden=true;$('solution-banner').hidden=true;$('bisection-count').textContent='—';$('newton-count').textContent='—';$('iteration-rows').replaceChildren();$('table-title').textContent='Tabla de iteraciones · 0 pasos';$('empty-table').hidden=false;$('apriori').textContent='';return;}
+  if(!valid){['bound-a','bound-b','bound-m'].forEach(id=>$(id).textContent='—');$('fa').textContent=$('fb').textContent='Sin intervalo';$('fm').textContent='—';$('step-badge').textContent='SIN RAÍZ UTILIZABLE';$('trial-math').textContent='No hay un intervalo válido para Bisección.';$('step-message').textContent='Modificá los parámetros hasta que exista una raíz baja/directa dentro de θ ≤ 45°.';$('keep-interval').textContent='—';$('next-step').disabled=true;$('solve').disabled=true;$('restart-math').disabled=true;$('interval-active').style.width='0%';$('interval-mid').hidden=true;$('solution-banner').hidden=true;$('bisection-count').textContent='—';$('newton-count').textContent='—';$('iteration-rows').replaceChildren();$('table-title').textContent='Tabla de iteraciones · 0 pasos';$('empty-table').hidden=false;$('apriori').textContent='';return;}
   $('next-step').disabled=search.done;$('solve').disabled=search.done;$('restart-math').disabled=!row;
   const a=row?row.a:search.lo,b=row?row.b:search.hi,domain=model.chosen.bracket,span=domain[1]-domain[0],percent=x=>100*(x-domain[0])/span;
   $('bound-a').textContent=fmt(a,3)+'°';$('bound-b').textContent=fmt(b,3)+'°';$('fa').textContent='f(a) = '+fmt(fDeg(a),4)+' m';$('fb').textContent='f(b) = '+fmt(fDeg(b),4)+' m';$('bound-m').textContent=row?fmt(row.m,3)+'°':'—';$('fm').textContent=row?'f(p) = '+fmt(row.f,4)+' m':'Todavía sin probar';$('domain-a').textContent=fmt(domain[0],2)+'°';$('domain-b').textContent=fmt(domain[1],2)+'°';$('interval-active').style.left=percent(search.lo)+'%';$('interval-active').style.width=Math.max(0,percent(search.hi)-percent(search.lo))+'%';$('interval-mid').hidden=!row;if(row)$('interval-mid').style.left=percent(row.m)+'%';$('interval-width').textContent=`Intervalo conservado: ${fmt(search.lo,3)}°–${fmt(search.hi,3)}° · ancho ${fmt(search.hi-search.lo,4)}°`;const Nit=Math.max(1,Math.ceil(Math.log2(span/ANGLE_EPS)));$('apriori').textContent=`Con n=1 para la primera prueba, |eₙ| ≤ (b₀−a₀)/2ⁿ. Desde este intervalo bastan ${Nit} iteraciones para garantizar |eₙ| ≤ εθ = ${$('eps').selectedOptions[0].textContent}.`;
@@ -244,7 +303,7 @@ function renderMath(){renderNewton();
   $('solution-banner').hidden=!search.done;if(search.done){$('solution-title').textContent=`Raíz ≈ ${fmt(search.last.m,4)}°`;$('solution-message').textContent=`Bisección (α = 1) necesitó ${search.rows.length} iteraciones. Newton-Raphson (α = 2), partiendo del centro del intervalo, ${model.newtonResult?.ok?'necesitó '+model.newtonResult.rows.length+' iteraciones':'no convergió'} con la misma tolerancia angular εθ.`;}
   $('bisection-count').textContent=(model.bisectionSteps?.length||'—')+' it.';$('newton-count').textContent=(model.newtonResult?(model.newtonResult.ok?model.newtonResult.rows.length+' it.':'no converge'):'—');$('table-title').textContent='Tabla de iteraciones · '+search.rows.length+' pasos';$('empty-table').hidden=search.rows.length>0;$('iteration-rows').replaceChildren();for(const r of search.rows){const tr=document.createElement('tr');[r.n,fmt(r.a,4),fmt(r.b,4),fmt(r.m,4),fmt(r.f,6),fmt(r.bound,5)].forEach(v=>{const td=document.createElement('td');td.textContent=v;tr.append(td);});$('iteration-rows').append(tr);}
 }
-function showMode(next){mode=next;const math=mode==='math';$('shot-tab').setAttribute('aria-selected',String(!math));$('math-tab').setAttribute('aria-selected',String(math));$('shot-panel').hidden=math;$('config').hidden=math;$('math-panel').hidden=!math;$('subtitle').textContent=math?'La pelota ya tiene una trayectoria. Ahora veamos cómo aparece la ecuación no lineal.':'Elegí las condiciones del tiro. El modelo busca el menor ángulo que llega al objetivo y supera la barrera con margen.';}
+function showMode(next){mode=next;const math=mode==='math';$('shot-tab').setAttribute('aria-selected',String(!math));$('math-tab').setAttribute('aria-selected',String(math));$('shot-panel').hidden=math;$('config').hidden=math;$('math-panel').hidden=!math;$('subtitle').textContent=math?'La pelota ya tiene una trayectoria. Ahora veamos cómo aparece la ecuación no lineal.':'Elegí las condiciones del tiro. El modelo sigue la raíz baja/directa (θ ≤ 45°) y después verifica la barrera; nunca salta automáticamente a una raíz alta.';}
 function solveAll(){if(!search)return;let guard=0;while(!search.done&&guard++<100)stepSearch();renderMath();}
 function fullscreen(){if(document.fullscreenElement)document.exitFullscreen().catch(()=>{});else $('app').requestFullscreen().catch(()=>{$('fullscreen').textContent='Usá F11 para ampliar';});}
 inputs.forEach(el=>el.addEventListener('input',()=>{syncCfg();resetBall();updateScene();}));
