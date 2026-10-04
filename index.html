@@ -29,7 +29,37 @@ button:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visi
 @media(max-width:1050px){.config{grid-template-columns:repeat(3,1fr)}.math-main{grid-template-columns:1fr 1fr}}
 @media(max-width:760px){.app{padding:18px 16px}.intro{flex-direction:column;align-items:start;gap:14px}.modes{width:100%}.mode{flex:1}.config{grid-template-columns:1fr 1fr}.math-main,.details-group{grid-template-columns:1fr}.scene{height:320px}.compare{grid-template-columns:1fr}.offline{display:none}}
 @media(max-width:480px){.config{grid-template-columns:1fr}.skybar{padding:10px 13px}.readout{padding:7px 9px}.readout-value{font-size:18px}.scene{height:285px}.btn{padding:9px 12px;font-size:12px}.app{padding:14px 10px 22px}.equation{font-size:19px}.bounds{gap:5px}.bound{padding:8px 6px}.bound-value{font-size:16px}}
-@media(prefers-reduced-motion:reduce){.ball.moving{animation:none}.btn{transition:none}}
+
+.goal-celebration{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .25s ease;z-index:12}
+.goal-celebration.show{opacity:1}
+.goal-celebration .rainbow{position:absolute;left:58%;bottom:78px;transform:translateX(-50%);width:340px;height:170px;border-radius:340px 340px 0 0;overflow:hidden;filter:drop-shadow(0 8px 14px #0002)}
+.goal-celebration .band{position:absolute;left:50%;bottom:0;transform:translateX(-50%);border-radius:999px 999px 0 0;border-style:solid;border-bottom:none;opacity:.95}
+.goal-celebration .b1{width:340px;height:170px;border-width:22px;border-color:#ff4b4b}
+.goal-celebration .b2{width:300px;height:150px;border-width:20px;border-color:#ff9f1c}
+.goal-celebration .b3{width:262px;height:131px;border-width:18px;border-color:#ffe15a}
+.goal-celebration .b4{width:226px;height:113px;border-width:16px;border-color:#41d36b}
+.goal-celebration .b5{width:192px;height:96px;border-width:14px;border-color:#38bdf8}
+.goal-celebration .b6{width:160px;height:80px;border-width:12px;border-color:#7c3aed}
+.goal-celebration .cloud{position:absolute;bottom:2px;width:70px;height:28px;background:#fff;border-radius:30px;box-shadow:22px -10px 0 6px #fff,-18px -7px 0 4px #fff}
+.goal-celebration .cloud.c1{left:calc(50% - 130px)}
+.goal-celebration .cloud.c2{left:calc(50% + 55px)}
+.goal-burst{position:absolute;inset:0;overflow:hidden}
+.goal-burst span{position:absolute;bottom:84px;left:58%;width:10px;height:10px;border-radius:50%;background:#fff;opacity:0;animation:burst 1.2s ease-out forwards}
+.goal-burst span:nth-child(1){background:#ff4b4b;animation-delay:.02s;transform:translate(-50%,0);--dx:-140px;--dy:45px}
+.goal-burst span:nth-child(2){background:#ff9f1c;animation-delay:.08s;--dx:-95px;--dy:95px}
+.goal-burst span:nth-child(3){background:#ffe15a;animation-delay:.12s;--dx:-25px;--dy:130px}
+.goal-burst span:nth-child(4){background:#41d36b;animation-delay:.16s;--dx:40px;--dy:125px}
+.goal-burst span:nth-child(5){background:#38bdf8;animation-delay:.20s;--dx:102px;--dy:85px}
+.goal-burst span:nth-child(6){background:#7c3aed;animation-delay:.24s;--dx:145px;--dy:35px}
+.goal-burst span:nth-child(7){background:#ff4b4b;animation-delay:.28s;--dx:-150px;--dy:10px}
+.goal-burst span:nth-child(8){background:#ffe15a;animation-delay:.32s;--dx:155px;--dy:15px}
+.goal-text{position:absolute;left:58%;top:24px;transform:translateX(-50%) scale(.7);padding:10px 18px;border-radius:999px;background:#ffffffeb;color:#113028;font-weight:900;letter-spacing:.08em;box-shadow:0 10px 26px #0002;opacity:0}
+.goal-celebration.show .goal-text{animation:goalPop 1.4s ease both}
+.goal-celebration.show .rainbow{animation:rainbowPop 1.2s ease both}
+@keyframes goalPop{0%{opacity:0;transform:translateX(-50%) scale(.55)}20%{opacity:1;transform:translateX(-50%) scale(1.05)}65%{opacity:1;transform:translateX(-50%) scale(1)}100%{opacity:0;transform:translateX(-50%) scale(.92)}}
+@keyframes rainbowPop{0%{opacity:0;transform:translateX(-50%) scale(.8)}20%{opacity:1;transform:translateX(-50%) scale(1.03)}70%{opacity:1;transform:translateX(-50%) scale(1)}100%{opacity:0;transform:translateX(-50%) scale(.98)}}
+@keyframes burst{0%{opacity:0;transform:translate(-50%,0) scale(.4)}12%{opacity:1}100%{opacity:0;transform:translate(calc(-50% + var(--dx)), calc(var(--dy) * -1)) scale(1.6)}}
+@media(prefers-reduced-motion:reduce){.ball.moving{animation:none}.btn{transition:none}.goal-burst span,.goal-celebration.show .goal-text,.goal-celebration.show .rainbow{animation:none;opacity:1}}
 
 /* ===== Tema "día de partido": césped, marcador, tarjetas del árbitro ===== */
 :root{--ink:#0e1a12;--muted:#476453;--paper:#1f8040;--card:#fbfbf4;--line:#cfe0d4;--lime:#ffd400;--blue:#1f7a3d;--orange:#e4262b;--radius:4px;--shadow:0 8px 0 #0a3a1c66;--turf:#0f4d27;--led:#ffb703;--display:Impact,Haettenschweiler,"Arial Narrow Bold","Arial Black",sans-serif}
@@ -114,6 +144,14 @@ th{background:#0f4d27;color:#fff}tbody tr:last-child td{background:#fff2a8;font-
       <div class="label-chip small" id="wall-label">Barrera</div>
       <div class="label-chip" id="goal-label">Objetivo</div>
       <div class="scene-note" id="scene-note">Trayectoria directa = raíz baja (θ ≤ 45°). La raíz alta se descarta.</div>
+      <div class="goal-celebration" id="goal-celebration" aria-hidden="true">
+        <div class="goal-text">🌈 ¡GOL!</div>
+        <div class="rainbow">
+          <div class="band b1"></div><div class="band b2"></div><div class="band b3"></div><div class="band b4"></div><div class="band b5"></div><div class="band b6"></div>
+          <div class="cloud c1"></div><div class="cloud c2"></div>
+        </div>
+        <div class="goal-burst"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      </div>
     </div>
   </section>
 
@@ -161,7 +199,7 @@ th{background:#0f4d27;color:#fff}tbody tr:last-child td{background:#fff2a8;font-
     <div class="solution-banner" id="solution-banner" hidden><strong class="nums" id="solution-title"></strong><p id="solution-message"></p></div>
     <div class="details-group">
       <details class="details-box"><summary id="table-title">Tabla de iteraciones · 0 pasos</summary><div class="details-content table-wrap"><table><thead><tr><th>i</th><th>a (°)</th><th>b (°)</th><th>p=(a+b)/2 (°)</th><th>f(p) (m)</th><th>Cota |eₙ| (°)</th></tr></thead><tbody id="iteration-rows"></tbody></table><p id="empty-table">La primera fila aparece al probar el punto medio.</p></div></details>
-      <details class="details-box"><summary>Modelo y criterio de “ideal”</summary><div class="details-content"><p>Usamos un modelo de proyectil sin resistencia del aire ni efecto Magnus. La trayectoria viene dada por:</p><div class="model-formula">y(x,θ) = x·tan(θ) − g·x² / [2·v₀²·cos²(θ)]</div><p>Buscamos θ tal que <b>y(D,θ) = H<sub>obj</sub></b>. Puede haber dos ángulos que llegan al mismo punto: una raíz baja y otra alta. Para que el simulador represente un tiro libre directo y no salte de golpe a arcos de 70°–80°, en esta demo seguimos únicamente la <b>raíz baja/directa (θ ≤ 45°)</b>. Después verificamos si esa raíz supera la barrera con un margen de 0,20 m. Si no la supera, el resultado se marca como no factible en vez de elegir automáticamente la raíz alta.</p><p>Esto no pretende predecir exactamente un tiro profesional real: es una generalización matemática útil para mostrar cómo un problema físico se transforma en una ecuación no lineal.</p></div></details>
+      <details class="details-box"><summary>Modelo y criterio de “ideal”</summary><div class="details-content"><p>Usamos un modelo de proyectil sin resistencia del aire ni efecto Magnus. La trayectoria viene dada por:</p><div class="model-formula">y(x,θ) = x·tan(θ) − g·x² / [2·v₀²·cos²(θ)]</div><p>Buscamos θ tal que <b>y(D,θ) = H<sub>obj</sub></b>. Puede haber dos ángulos que llegan al mismo punto: una raíz baja y otra alta. Para que el simulador represente un tiro libre directo y no salte de golpe a arcos de 70°–80°, en esta demo seguimos únicamente la <b>raíz baja/directa (θ ≤ 45°)</b>. Después verificamos si esa raíz supera la barrera con un margen de 0,20 m. Si no la supera, el resultado se marca como no factible en vez de elegir automáticamente la raíz alta. Si la trayectoria intersecta físicamente la barrera, la animación y la curva se detienen en el punto de impacto.</p><p>Esto no pretende predecir exactamente un tiro profesional real: es una generalización matemática útil para mostrar cómo un problema físico se transforma en una ecuación no lineal.</p></div></details>
       <details class="details-box wide"><summary id="newton-title">Newton-Raphson · tabla · 0 pasos</summary><div class="details-content"><div class="table-wrap"><table><thead><tr><th>i</th><th>θᵢ (°)</th><th>f(θᵢ) (m)</th><th>f′(θᵢ) (m/°)</th><th>ξ = |θᵢ₊₁ − θᵢ| (°)</th></tr></thead><tbody id="newton-rows"></tbody></table></div><p>Fórmula del curso: θᵢ₊₁ = θᵢ − f(θᵢ) / f′(θᵢ), con la derivada analítica:</p><div class="model-formula">f′(θ°) = (π/180)·sec²θ · (D − g·D²·tanθ / v₀²)</div><p>Como θ se expresa en grados, aparece el factor π/180. La derivada se anula en θ* = <b id="theta-star">—</b>, el ángulo que maximiza y(D,θ). Ahí Newton falla por derivada nula, y si x₀ queda cerca de θ* un paso puede saltar a la otra raíz o divergir. No hay un criterio general de convergencia, por eso conviene partir cerca de la raíz (aquí, el centro del intervalo de Bisección).</p></div></details>
     </div>
   </section>
@@ -182,6 +220,8 @@ const cfg={D:30,v:25,target:2.1,wallD:9.15,wallH:1.8};
 let model=null, search=null, mode='shot', frame=0, animating=false, startTime=0;
 const inputs=[$('distance'),$('speed'),$('target'),$('wall-distance'),$('wall-height')];
 function announce(s){$('announcer').textContent=s;}
+function clearGoalCelebration(){const el=$('goal-celebration');el.classList.remove('show');}
+function triggerGoalCelebration(){const el=$('goal-celebration');el.classList.remove('show');void el.offsetWidth;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),1500);}
 function yAt(x,theta){const c=Math.cos(theta),t=Math.tan(theta);return x*t-G*x*x/(2*cfg.v*cfg.v*c*c);}
 function fDeg(d){return yAt(cfg.D,rad(d))-cfg.target;}
 function rootScan(){
@@ -227,8 +267,9 @@ function analyze(){
   const data=roots.map(angle=>{
     const th=rad(angle),wallY=yAt(cfg.wallD,th),flight=cfg.D/(cfg.v*Math.cos(th)),clear=wallY-(cfg.wallH+MARGIN);
     const direct=angle<=DIRECT_MAX_ANGLE+1e-9;
-    const feasible=direct&&clear>=0&&cfg.target<=CROSSBAR;
-    return{angle,th,wallY,clear,flight,direct,feasible,bracket:direct?bracketFor(angle):null};
+    const hitsWall=wallY<=cfg.wallH;
+    const feasible=direct&&!hitsWall&&clear>=0&&cfg.target<=CROSSBAR;
+    return{angle,th,wallY,clear,flight,direct,hitsWall,feasible,bracket:direct?bracketFor(angle):null};
   });
   // Siempre seguimos la raíz baja/directa. Si no supera la barrera, se informa como
   // trayectoria no factible; nunca saltamos automáticamente a la raíz alta.
@@ -254,13 +295,17 @@ function syncCfg(){cfg.D=Number($('distance').value);cfg.v=Number($('speed').val
 function sceneCoords(x,y){const left=55,right=930,ground=290,scaleX=(right-left)/cfg.D,scaleY=68;return{x:left+x*scaleX,y:ground-y*scaleY};}
 function drawGoalNet(){const g=$('goal-net');g.replaceChildren();const NS='http://www.w3.org/2000/svg';for(let x=936;x<=985;x+=12){const l=document.createElementNS(NS,'line');l.setAttribute('x1',x);l.setAttribute('x2',x);l.setAttribute('y1','120');l.setAttribute('y2','290');l.setAttribute('class','net');g.append(l);}for(let y=135;y<=285;y+=18){const l=document.createElementNS(NS,'line');l.setAttribute('x1','930');l.setAttribute('x2','985');l.setAttribute('y1',y);l.setAttribute('y2',y);l.setAttribute('class','net');g.append(l);}}
 function updateScene(){
+  clearGoalCelebration();
   model=analyze();search=null;
   const chosen=model.chosen,ideal=model.ideal;
   const bx=sceneCoords(cfg.wallD,0).x, wallTop=sceneCoords(cfg.wallD,cfg.wallH).y;
   $('barrier-line').setAttribute('x1',bx);$('barrier-line').setAttribute('x2',bx);$('barrier-line').setAttribute('y1','290');$('barrier-line').setAttribute('y2',wallTop);
   $('wall-label').style.left=(bx/10)+'%';$('wall-label').style.top=(wallTop/3.5)+'%';
   const tgt=sceneCoords(cfg.D,cfg.target);$('target-ring').setAttribute('cx',tgt.x);$('target-ring').setAttribute('cy',tgt.y);$('goal-label').style.left=(tgt.x/10)+'%';$('goal-label').style.top=(tgt.y/3.5)+'%';$('goal-label').textContent='Objetivo '+fmt(cfg.target,2)+' m';
-  let path='';if(chosen){for(let i=0;i<=90;i++){const x=cfg.D*i/90,y=Math.max(0,yAt(x,chosen.th)),p=sceneCoords(x,y);path+=(i?' L ':'M ')+p.x.toFixed(1)+' '+p.y.toFixed(1);} }
+  let path='';if(chosen){
+    const endX=chosen.hitsWall?cfg.wallD:cfg.D;
+    for(let i=0;i<=90;i++){const x=endX*i/90,y=Math.max(0,yAt(x,chosen.th)),p=sceneCoords(x,y);path+=(i?' L ':'M ')+p.x.toFixed(1)+' '+p.y.toFixed(1);}
+  }
   $('arc').setAttribute('d',path);$('arc-shadow').setAttribute('d',path);
   const start=sceneCoords(0,0);$('ball').style.left=(start.x/10)+'%';$('ball').style.top=(start.y/3.5)+'%';$('ball').classList.remove('moving');
   if(ideal){
@@ -270,11 +315,21 @@ function updateScene(){
     $('m-angle').textContent=fmt(ideal.angle,2)+'°';$('m-clearance').textContent=fmt(ideal.wallY,2)+' m';$('m-time').textContent=fmt(ideal.flight,2)+' s';
   }
   else if(chosen){
-    $('angle-readout').textContent=fmt(chosen.angle,2)+'°';$('scene-label').textContent='Raíz baja encontrada, pero no supera la barrera';$('result-strip').classList.add('warn');
-    $('result-title').textContent='La trayectoria directa no es factible con estos parámetros.';
+    $('angle-readout').textContent=fmt(chosen.angle,2)+'°';$('result-strip').classList.add('warn');
     const highMsg=model.highRoot?` Existe otra raíz matemática de ${fmt(model.highRoot.angle,2)}°, pero se descarta por ser una trayectoria alta y no un tiro directo.`:'';
-    $('result-subtitle').textContent=`La raíz baja llega al objetivo, pero en la barrera alcanza ${fmt(chosen.wallY,2)} m y necesita ${fmt(cfg.wallH+MARGIN,2)} m.${highMsg}`;
-    $('m-angle').textContent=fmt(chosen.angle,2)+'°';$('m-clearance').textContent=fmt(chosen.wallY,2)+' m';$('m-time').textContent=fmt(chosen.flight,2)+' s';
+    if(chosen.hitsWall){
+      const hitTime=cfg.wallD/(cfg.v*Math.cos(chosen.th));
+      $('scene-label').textContent='Impacto con la barrera';
+      $('result-title').textContent='La pelota choca con la barrera.';
+      $('result-subtitle').textContent=`A la distancia de la barrera la pelota está a ${fmt(chosen.wallY,2)} m, por debajo de la altura de la barrera (${fmt(cfg.wallH,2)} m). La animación se detiene en el impacto.${highMsg}`;
+      $('m-time').textContent=fmt(hitTime,2)+' s';
+    }else{
+      $('scene-label').textContent='Supera la barrera, pero no cumple el margen';
+      $('result-title').textContent='La trayectoria directa no cumple el criterio de “ideal”.';
+      $('result-subtitle').textContent=`La pelota supera físicamente la barrera (${fmt(chosen.wallY,2)} m > ${fmt(cfg.wallH,2)} m), pero no alcanza el margen de seguridad de ${fmt(MARGIN,2)} m.${highMsg}`;
+      $('m-time').textContent=fmt(chosen.flight,2)+' s';
+    }
+    $('m-angle').textContent=fmt(chosen.angle,2)+'°';$('m-clearance').textContent=fmt(chosen.wallY,2)+' m';
   }
   else{
     $('angle-readout').textContent='—';$('scene-label').textContent='No hay una raíz de trayectoria directa';$('result-strip').classList.add('warn');
@@ -285,9 +340,38 @@ function updateScene(){
   }
   initMath();
 }
-function pointAt(progress){const c=model&&model.chosen;if(!c)return sceneCoords(0,0);const x=cfg.D*clamp(progress,0,1),y=Math.max(0,yAt(x,c.th));return sceneCoords(x,y);}
-function shoot(){if(!model||!model.chosen)return;cancelAnimationFrame(frame);animating=true;startTime=0;$('ball').classList.add('moving');const dur=Math.max(.7,model.chosen.flight/Number($('playback').value));function tick(ts){if(!startTime)startTime=ts;const p=clamp((ts-startTime)/(dur*1000),0,1),pt=pointAt(p);$('ball').style.left=(pt.x/10)+'%';$('ball').style.top=(pt.y/3.5)+'%';if(p<1){frame=requestAnimationFrame(tick);}else{$('ball').classList.remove('moving');animating=false;announce('La pelota llegó al objetivo simulado.');}}frame=requestAnimationFrame(tick);}
-function resetBall(){cancelAnimationFrame(frame);animating=false;const p=sceneCoords(0,0);$('ball').style.left=(p.x/10)+'%';$('ball').style.top=(p.y/3.5)+'%';$('ball').classList.remove('moving');}
+function pointAt(progress){
+  const c=model&&model.chosen;if(!c)return sceneCoords(0,0);
+  const endX=c.hitsWall?cfg.wallD:cfg.D;
+  const x=endX*clamp(progress,0,1),y=Math.max(0,yAt(x,c.th));
+  return sceneCoords(x,y);
+}
+function shoot(){
+  if(!model||!model.chosen)return;
+  cancelAnimationFrame(frame);animating=true;startTime=0;$('ball').classList.add('moving');
+  const c=model.chosen;
+  const travelTime=c.hitsWall?cfg.wallD/(cfg.v*Math.cos(c.th)):c.flight;
+  const dur=Math.max(.45,travelTime/Number($('playback').value));
+  function tick(ts){
+    if(!startTime)startTime=ts;
+    const p=clamp((ts-startTime)/(dur*1000),0,1),pt=pointAt(p);
+    $('ball').style.left=(pt.x/10)+'%';$('ball').style.top=(pt.y/3.5)+'%';
+    if(p<1){frame=requestAnimationFrame(tick);}
+    else{
+      $('ball').classList.remove('moving');animating=false;
+      if(c.hitsWall){
+        $('scene-label').textContent='💥 Impacto con la barrera';
+        announce('La pelota chocó con la barrera y se detuvo en el punto de impacto.');
+      }else{
+        triggerGoalCelebration();
+        $('scene-label').textContent='🌈 ¡Gol!';
+        announce('¡Gol! La pelota llegó al objetivo y aparece una animación arcoíris.');
+      }
+    }
+  }
+  frame=requestAnimationFrame(tick);
+}
+function resetBall(){cancelAnimationFrame(frame);animating=false;clearGoalCelebration();const p=sceneCoords(0,0);$('ball').style.left=(p.x/10)+'%';$('ball').style.top=(p.y/3.5)+'%';$('ball').classList.remove('moving');}
 function makeSearch(){if(!model||!model.chosen||!model.chosen.bracket)return null;return{lo:model.chosen.bracket[0],hi:model.chosen.bracket[1],rows:[],done:false,last:null};}
 function initMath(){search=makeSearch();renderMath();}
 function stepSearch(){if(!search||search.done)return null;const a=search.lo,b=search.hi,m=(a+b)/2,fa=fDeg(a),fm=fDeg(m),bound=(b-a)/2;if(fa*fm<=0)search.hi=m;else search.lo=m;const row={n:search.rows.length+1,a,b,m,f:fm,bound,lo:search.lo,hi:search.hi};search.rows.push(row);search.last=row;search.done=Math.abs(fm)<1e-12||bound<=ANGLE_EPS||search.rows.length>=MAXIT;return row;}
